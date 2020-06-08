@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:Adiva/authenticated/dashboard/dashboard.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -18,13 +19,14 @@ class _LoginState extends State<Login> {
                     //color: Colors.red,
                     child: Column(
                       children: <Widget>[
-                        SizedBox(height: MediaQuery.of(context).size.height / 19),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height / 19),
                         Container(
                           //color: Colors.red,
                           child: Image.network(
                             "https://res.cloudinary.com/dlkv086v3/image/upload/v1591385468/logo_iumzc5.png",
                             height: 100,
-                            width:200,
+                            width: 200,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -39,12 +41,16 @@ class _LoginState extends State<Login> {
                                     decoration: new BoxDecoration(
                                         color: Colors.white,
                                         border: new Border.all(
-                                            color: Color(0xFF3edd9c).withOpacity(.7),
+                                            color: Color(0xFF3edd9c)
+                                                .withOpacity(.7),
                                             width: 1.0,
                                             style: BorderStyle.solid)),
                                     child: TextFormField(
                                       decoration: InputDecoration(
-                                        labelStyle: TextStyle(fontSize: 17.0, color: Color(0xFF2f3640).withOpacity(.2)),
+                                          labelStyle: TextStyle(
+                                              fontSize: 17.0,
+                                              color: Color(0xFF2f3640)
+                                                  .withOpacity(.2)),
                                           contentPadding: EdgeInsets.only(
                                               left: 10.0, right: 10.0),
                                           labelText: 'User ID',
@@ -55,12 +61,16 @@ class _LoginState extends State<Login> {
                                     decoration: new BoxDecoration(
                                         color: Colors.white,
                                         border: new Border.all(
-                                            color: Color(0xFF3edd9c).withOpacity(.7),
+                                            color: Color(0xFF3edd9c)
+                                                .withOpacity(.7),
                                             width: 1.0,
                                             style: BorderStyle.solid)),
                                     child: TextFormField(
                                       decoration: InputDecoration(
-                                        labelStyle: TextStyle(fontSize: 17.0, color: Color(0xFF2f3640).withOpacity(.2)),
+                                          labelStyle: TextStyle(
+                                              fontSize: 17.0,
+                                              color: Color(0xFF2f3640)
+                                                  .withOpacity(.2)),
                                           contentPadding: EdgeInsets.only(
                                               left: 10.0, right: 10.0),
                                           labelText: 'Password',
@@ -77,7 +87,10 @@ class _LoginState extends State<Login> {
                                             style: TextStyle(
                                               fontSize: 18,
                                             )),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .push(_dashboardRoute());
+                                        },
                                         color: Color(0xFF3edd9c),
                                         textColor: Colors.white,
                                         padding: EdgeInsets.all(8.0),
@@ -88,4 +101,21 @@ class _LoginState extends State<Login> {
                       ],
                     )))));
   }
+}
+
+Route _dashboardRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => Dashboard(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }

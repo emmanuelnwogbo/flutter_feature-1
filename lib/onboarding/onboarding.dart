@@ -177,18 +177,18 @@ _animatedBox(active, context, index) {
                     left: 1.0,
                     right: 1.0,
                     child: Container(
-                        height: 40.0,
+                        height: MediaQuery.of(context).size.width / 9,
                         width: MediaQuery.of(context).size.width,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text(onboardimages[index].message,
+                            Expanded(child: Text(onboardimages[index].message,
                             textAlign: TextAlign.center,
                                 style: TextStyle(
                                     letterSpacing: .8,
                                     color: Colors.black.withOpacity(.5),
-                                    fontSize: 15.0))
+                                    fontSize: 15.0)))
                           ],
                         )),
                   )
