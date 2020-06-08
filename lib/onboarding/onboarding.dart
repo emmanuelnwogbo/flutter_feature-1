@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:Adiva/data.dart';
+import 'package:Adiva/forms/Login.dart';
+import 'package:Adiva/forms/Signup.dart';
 
 class Onboarding extends StatefulWidget {
   @override
@@ -6,48 +9,244 @@ class Onboarding extends StatefulWidget {
 }
 
 class _OnboardingState extends State<Onboarding> {
-  var currentPage = 1.0;
+  List<Widget> indicators = new List();
+  var currentPage = 0;
 
   PageController controller =
-      PageController(initialPage: 1, viewportFraction: 0.2);
+      PageController(initialPage: 0, viewportFraction: 1);
 
   @override
   Widget build(BuildContext context) {
     controller.addListener(() {
-      setState(() {
-        currentPage = controller.page;
-        print(currentPage);
-      });
+      int next = controller.page.round();
+
+      if (currentPage != next) {
+        setState(() {
+          currentPage = next;
+          print(currentPage);
+        });
+      }
     });
 
-    return Container(
+    return Scaffold(
+        body: SingleChildScrollView(
+      child: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 1.5,
-        child: PageView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: 10,
-            controller: controller,
-            itemBuilder: (context, index) {
-              return Center(child: AnimatedBox(currentPage == index, index));
-            }));
+        height: MediaQuery.of(context).size.height,
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: MediaQuery.of(context).size.height / 10),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 1.9,
+              //color: Colors.red,
+              child: PageView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: onboardimages.length,
+                  controller: controller,
+                  itemBuilder: (context, index) {
+                    bool active = index == currentPage;
+                    return Container(
+                        //color: Colors.blue,
+                        margin: EdgeInsets.only(left: 2.0, right: 2.0),
+                        child: Center(
+                          child: _animatedBox(active, context, index),
+                        ));
+                  }),
+            ),
+            Center(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 10.0),
+                  Center(
+                      child: Container(
+                          width: MediaQuery.of(context).size.width / 7,
+                          height: 20,
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.ease,
+                                      height: 11.0,
+                                      width: 10.0,
+                                      color: currentPage == 0
+                                          ? Color(0xFF3edd9c)
+                                          : Color(0xFFecf0f1))),
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.ease,
+                                      height: 11.0,
+                                      width: 10.0,
+                                      color: currentPage == 1
+                                          ? Color(0xFF3edd9c)
+                                          : Color(0xFFecf0f1))),
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                  child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 300),
+                                      curve: Curves.ease,
+                                      height: 11.0,
+                                      width: 10.0,
+                                      color: currentPage == 2
+                                          ? Color(0xFF3edd9c)
+                                          : Color(0xFFecf0f1))),
+                            ],
+                          )))),
+                  SizedBox(height: MediaQuery.of(context).size.height / 14),
+                  Center(
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30.0),
+                        child: Container(
+                          width: 190,
+                          height: 55,
+                          child: FlatButton(
+                            child: Text('LOGIN',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                )),
+                            onPressed: () {
+                              Navigator.of(context).push(_signInRoute());
+                            },
+                            color: Color(0xFF3edd9c),
+                            textColor: Colors.white,
+                            padding: EdgeInsets.all(8.0),
+                          ),
+                        )),
+                  ),
+                  SizedBox(height: 20.0),
+                  Center(
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30.0),
+                        child: Container(
+                          width: 190,
+                          height: 55,
+                          child: FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).push(_signUpRoute());
+                            },
+                            color: Color(0xFF3edd9c),
+                            textColor: Colors.white,
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('SIGN UP',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                )),
+                          ),
+                        )),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    ));
   }
 }
 
-class AnimatedBox extends StatelessWidget {
-  AnimatedBox(this.active, this.index);
-  final bool active;
-  final int index;
+_animatedBox(active, context, index) {
+  final double top = active ? 0 : 70;
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
-      curve: Curves.fastLinearToSlowEaseIn,
-      margin: EdgeInsets.only(top: active ? 0 : 30, bottom: 50, right: 10),
-      color: active ? Colors.red : Colors.blue,
-      //color: Colors.red,
-      height: 50.0,
-      width: MediaQuery.of(context).size.width,
-    );
-  }
+  return AnimatedOpacity(
+      opacity: active ? 1 : 0,
+      duration: Duration(milliseconds: 300),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+        child: Stack(
+          children: <Widget>[
+            AspectRatio(
+              aspectRatio: 15.0 / 17.0,
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image(
+                      image: NetworkImage(
+                        onboardimages[index].url,
+                      ),
+                      fit: BoxFit.cover),
+                  Positioned(
+                    bottom: 1.0,
+                    left: 1.0,
+                    right: 1.0,
+                    child: Container(
+                        height: 40.0,
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(onboardimages[index].message,
+                            textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    letterSpacing: .8,
+                                    color: Colors.black.withOpacity(.5),
+                                    fontSize: 15.0))
+                          ],
+                        )),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+        height: active
+            ? MediaQuery.of(context).size.height / 2
+            : MediaQuery.of(context).size.height / 4,
+        width: active
+            ? MediaQuery.of(context).size.width / 1.1
+            : MediaQuery.of(context).size.width / 2,
+        margin: EdgeInsets.only(top: top, left: 5.0, right: 5.0),
+        decoration: BoxDecoration(color: Colors.white, boxShadow: [
+          BoxShadow(
+            color: active
+                ? Colors.grey.withOpacity(0.1)
+                : Colors.grey.withOpacity(0),
+            spreadRadius: 5,
+            blurRadius: 3,
+            offset: Offset(0, 1),
+          )
+        ]),
+      ));
+}
+
+Route _signUpRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => Signup(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route _signInRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => Login(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
